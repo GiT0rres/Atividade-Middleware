@@ -1,58 +1,229 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🔐 Atividade Middleware — Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Projeto desenvolvido como atividade acadêmica para demonstrar o funcionamento de **Middleware no Framework Laravel**.
 
-## About Laravel
+A aplicação possui uma rota protegida por um Middleware responsável por verificar o acesso do usuário. Quando o acesso não é permitido, uma mensagem é enviada para uma **View Blade** informando que o usuário não possui permissão para acessar o site.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📚 Objetivo
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+O objetivo desta atividade é compreender na prática a comunicação entre os principais componentes do Laravel:
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```text
+Rota
+  ↓
+Controller
+  ↓
+Middleware
+  ↓
+View
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+O projeto demonstra como um Middleware pode **interceptar uma requisição** antes que ela prossiga normalmente para a aplicação.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🛠️ Tecnologias utilizadas
 
-## Code of Conduct
+* **PHP**
+* **Laravel 13**
+* **Blade**
+* **HTML5**
+* **CSS3**
+* **Composer**
+* **Git e GitHub**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 📂 Estrutura principal
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```text
+atividade-middleware/
+│
+├── app/
+│   └── Http/
+│       ├── Controllers/
+│       │   └── SiteController.php
+│       │
+│       └── Middleware/
+│           └── VerificarPermissao.php
+│
+├── bootstrap/
+│   └── app.php
+│
+├── public/
+│   └── css/
+│       └── style.css
+│
+├── resources/
+│   └── views/
+│       ├── site.blade.php
+│       └── sem-permissao.blade.php
+│
+├── routes/
+│   └── web.php
+│
+├── .env.example
+├── artisan
+├── composer.json
+└── README.md
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🔄 Funcionamento
+
+Quando o usuário acessa a rota:
+
+```text
+/site
+```
+
+a requisição passa pelo Middleware `VerificarPermissao`.
+
+O fluxo da aplicação funciona da seguinte maneira:
+
+```text
+🌐 Usuário acessa /site
+          ↓
+🛣️ Rota Laravel
+          ↓
+🎮 SiteController
+          ↓
+🔐 VerificarPermissao
+          ↓
+❌ Acesso não permitido
+          ↓
+🖥️ View sem-permissao.blade.php
+          ↓
+💬 Mensagem de acesso negado
+```
+
+---
+
+## 🔐 Middleware
+
+O Middleware utilizado no projeto é:
+
+```text
+VerificarPermissao
+```
+
+Ele é responsável por interceptar a requisição e impedir que o usuário continue para a página protegida.
+
+Quando o acesso não é permitido, o Middleware retorna a View:
+
+```text
+sem-permissao.blade.php
+```
+
+com a seguinte mensagem:
+
+> **Você não tem permissão para acessar este site.**
+> **Favor entrar em contato com o administrador.**
+
+---
+
+## 🎮 Controller
+
+O Controller utilizado é:
+
+```text
+SiteController
+```
+
+Ele possui o método:
+
+```php
+public function acessar()
+{
+    return view('site');
+}
+```
+
+O Controller representa a etapa responsável por receber a requisição e direcionar o fluxo da aplicação.
+
+---
+
+## 🖥️ View
+
+A mensagem de acesso negado é exibida através da View:
+
+```text
+resources/views/sem-permissao.blade.php
+```
+
+Foi utilizado um CSS simples para organizar a apresentação da mensagem na tela.
+
+---
+
+## 🚀 Como executar o projeto
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/GiT0rres/Atividade-Middleware.git
+```
+
+### 2. Entre na pasta
+
+```bash
+cd Atividade-Middleware
+```
+
+### 3. Instale as dependências do Laravel
+
+```bash
+composer install
+```
+
+### 4. Crie o arquivo `.env`
+
+```bash
+cp .env.example .env
+```
+
+### 5. Gere a chave da aplicação
+
+```bash
+php artisan key:generate
+```
+
+### 6. Inicie o servidor
+
+```bash
+php artisan serve
+```
+
+### 7. Acesse a aplicação
+
+Abra no navegador:
+
+```text
+http://127.0.0.1:8000/site
+```
+
+---
+
+## 📌 Resultado esperado
+
+Ao acessar a rota protegida, o sistema deverá apresentar:
+
+```text
+Acesso negado
+
+Você não tem permissão para acessar este site.
+
+Favor entrar em contato com o administrador.
+```
+
+---
+
+## 🎓 Atividade acadêmica
+
+Projeto desenvolvido para fins **educacionais**, com o objetivo de estudar e praticar o conceito de **Middleware no Laravel**.
+
+**Framework:** Laravel 13
+**Linguagem:** PHP
+**Tema:** Controller, Middleware e View
