@@ -1,53 +1,53 @@
-# 🔐 Atividade Middleware — Laravel
+# Atividade de Middleware – Laravel
 
-Projeto desenvolvido como atividade acadêmica para demonstrar o funcionamento de **Middleware no Framework Laravel**.
+## 📌 Descrição
 
-A aplicação possui uma rota protegida por um Middleware responsável por verificar o acesso do usuário. Quando o acesso não é permitido, uma mensagem é enviada para uma **View Blade** informando que o usuário não possui permissão para acessar o site.
+Este projeto foi desenvolvido como uma atividade prática utilizando o **Framework Laravel**, com o objetivo de demonstrar o funcionamento de uma **Middleware**.
+
+A Middleware é responsável por verificar o acesso a uma determinada rota e, neste projeto, exibe uma mensagem informando ao usuário que ele não possui permissão para acessar o site.
+
+### 💬 Mensagem exibida
+
+> Você não tem permissão para acessar este site.
+> Favor entrar em contato com o administrador.
 
 ---
 
-## 📚 Objetivo
+## 🎯 Objetivo da atividade
 
-O objetivo desta atividade é compreender na prática a comunicação entre os principais componentes do Laravel:
+Criar uma aplicação no Framework Laravel onde:
 
-```text
-Rota
-  ↓
-Controller
-  ↓
-Middleware
-  ↓
-View
-```
-
-O projeto demonstra como um Middleware pode **interceptar uma requisição** antes que ela prossiga normalmente para a aplicação.
+* O usuário acessa uma rota através do Controller;
+* A rota utiliza uma Middleware;
+* A Middleware intercepta a requisição;
+* A Middleware exibe uma mensagem na Visualização (View);
+* A execução da Middleware é demonstrada no README.
 
 ---
 
 ## 🛠️ Tecnologias utilizadas
 
 * **PHP**
-* **Laravel 13**
+* **Laravel 13.29.0**
 * **Blade**
 * **HTML5**
 * **CSS3**
-* **Composer**
 * **Git e GitHub**
 
 ---
 
-## 📂 Estrutura principal
+## 📂 Estrutura principal do projeto
 
-```text
+```
 atividade-middleware/
 │
 ├── app/
-│   └── Http/
-│       ├── Controllers/
-│       │   └── SiteController.php
-│       │
-│       └── Middleware/
-│           └── VerificarPermissao.php
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── SiteController.php
+│   │   │
+│   │   └── Middleware/
+│   │       └── VerificarPermissao.php
 │
 ├── bootstrap/
 │   └── app.php
@@ -58,13 +58,16 @@ atividade-middleware/
 │
 ├── resources/
 │   └── views/
-│       ├── site.blade.php
-│       └── sem-permissao.blade.php
+│       ├── sem-permissao.blade.php
+│       └── site.blade.php
 │
 ├── routes/
 │   └── web.php
 │
-├── .env.example
+├── prints/
+│   ├── middleware-terminal.png
+│   └── mensagem-site.png
+│
 ├── artisan
 ├── composer.json
 └── README.md
@@ -72,147 +75,196 @@ atividade-middleware/
 
 ---
 
-## 🔄 Funcionamento
+# 🔐 Funcionamento da Middleware
 
-Quando o usuário acessa a rota:
+O funcionamento da aplicação ocorre da seguinte maneira:
 
-```text
-/site
 ```
-
-a requisição passa pelo Middleware `VerificarPermissao`.
-
-O fluxo da aplicação funciona da seguinte maneira:
-
-```text
-🌐 Usuário acessa /site
-          ↓
-🛣️ Rota Laravel
-          ↓
-🎮 SiteController
-          ↓
-🔐 VerificarPermissao
-          ↓
-❌ Acesso não permitido
-          ↓
-🖥️ View sem-permissao.blade.php
-          ↓
-💬 Mensagem de acesso negado
+Usuário
+   ↓
+Acessa /site
+   ↓
+Route
+   ↓
+Middleware verificar.permissao
+   ↓
+Verifica a permissão
+   ↓
+Sem permissão
+   ↓
+View sem-permissao.blade.php
+   ↓
+Mensagem de acesso negado
 ```
 
 ---
 
-## 🔐 Middleware
+## 💻 Controller
 
-O Middleware utilizado no projeto é:
+O Controller utilizado na atividade é o `SiteController`.
 
-```text
-VerificarPermissao
+Arquivo:
+
+```
+app/Http/Controllers/SiteController.php
 ```
 
-Ele é responsável por interceptar a requisição e impedir que o usuário continue para a página protegida.
+Código:
 
-Quando o acesso não é permitido, o Middleware retorna a View:
-
-```text
-sem-permissao.blade.php
 ```
+<?php
 
-com a seguinte mensagem:
+namespace App\Http\Controllers;
 
-> **Você não tem permissão para acessar este site.**
-> **Favor entrar em contato com o administrador.**
-
----
-
-## 🎮 Controller
-
-O Controller utilizado é:
-
-```text
-SiteController
-```
-
-Ele possui o método:
-
-```php
-public function acessar()
+class SiteController extends Controller
 {
-    return view('site');
+    public function acessar()
+    {
+        return view('site');
+    }
 }
 ```
 
-O Controller representa a etapa responsável por receber a requisição e direcionar o fluxo da aplicação.
+O método `acessar()` é responsável por acessar a View `site`.
 
 ---
 
-## 🖥️ View
+# 🛡️ Middleware
 
-A mensagem de acesso negado é exibida através da View:
+A Middleware utilizada no projeto está localizada em:
 
-```text
-resources/views/sem-permissao.blade.php
+```
+app/Http/Middleware/VerificarPermissao.php
 ```
 
-Foi utilizado um CSS simples para organizar a apresentação da mensagem na tela.
+Código:
+
+```
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class VerificarPermissao
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        return response()->view('sem-permissao');
+    }
+}
+```
+
+A Middleware intercepta a requisição e direciona o usuário para a View `sem-permissao`, onde a mensagem de acesso negado é apresentada.
 
 ---
 
-## 🚀 Como executar o projeto
+# 🌐 Rota
 
-### 1. Clone o repositório
+A rota está configurada no arquivo:
 
-```bash
-git clone https://github.com/GiT0rres/Atividade-Middleware.git
+```
+routes/web.php
 ```
 
-### 2. Entre na pasta
+Código:
 
-```bash
-cd Atividade-Middleware
+```
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SiteController;
+
+Route::get('/site', [SiteController::class, 'acessar'])
+    ->middleware('verificar.permissao');
 ```
 
-### 3. Instale as dependências do Laravel
+A rota `/site` utiliza a Middleware:
 
-```bash
-composer install
+```
+verificar.permissao
 ```
 
-### 4. Crie o arquivo `.env`
+---
 
-```bash
-cp .env.example .env
+# ⚙️ Registro da Middleware
+
+A Middleware foi registrada no arquivo:
+
+```
+bootstrap/app.php
 ```
 
-### 5. Gere a chave da aplicação
+Utilizando o alias:
 
-```bash
-php artisan key:generate
+```
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->alias([
+        'verificar.permissao' => \App\Http\Middleware\VerificarPermissao::class,
+    ]);
+})
 ```
 
-### 6. Inicie o servidor
+Dessa forma, o alias `verificar.permissao` pode ser utilizado diretamente na rota.
 
-```bash
+---
+
+# 🖥️ Execução da Middleware
+
+## 1. Verificação da rota
+
+Para verificar as rotas cadastradas no Laravel, foi utilizado o comando:
+
+```
+php artisan route:list -v
+```
+
+O resultado demonstra que a rota `/site` está vinculada ao `SiteController` e à Middleware `verificar.permissao`.
+
+### 📸 Middleware registrada na rota
+
+![Middleware registrada na rota](prints/middleware-terminal.png)
+
+### Resultado observado
+
+Na execução é possível identificar:
+
+```
+GET|HEAD  site
+SiteController@acessar
+web
+verificar.permissao
+```
+
+Isso comprova que a Middleware está associada à rota `/site`.
+
+---
+
+## 2. Execução no navegador
+
+Após iniciar o servidor Laravel com:
+
+```
 php artisan serve
 ```
 
-### 7. Acesse a aplicação
+foi acessada a seguinte rota:
 
-Abra no navegador:
-
-```text
+```
 http://127.0.0.1:8000/site
 ```
 
----
+A Middleware interceptou a requisição e exibiu a mensagem definida na View.
 
-## 📌 Resultado esperado
+### 📸 Mensagem exibida pela Middleware
 
-Ao acessar a rota protegida, o sistema deverá apresentar:
+![Mensagem exibida pela Middleware](prints/mensagem-site.png)
 
-```text
-Acesso negado
+### Mensagem apresentada
 
+```
 Você não tem permissão para acessar este site.
 
 Favor entrar em contato com o administrador.
@@ -220,10 +272,74 @@ Favor entrar em contato com o administrador.
 
 ---
 
-## 🎓 Atividade acadêmica
+# 📋 Resultado
 
-Projeto desenvolvido para fins **educacionais**, com o objetivo de estudar e praticar o conceito de **Middleware no Laravel**.
+A atividade demonstra o funcionamento de uma Middleware no Laravel.
 
-**Framework:** Laravel 13
-**Linguagem:** PHP
-**Tema:** Controller, Middleware e View
+Ao acessar a rota `/site`, a requisição passa pela Middleware `verificar.permissao`. Como o acesso não é permitido, a Middleware interrompe o fluxo normal e apresenta a View `sem-permissao.blade.php`.
+
+### Fluxo final
+
+```
+/site
+  ↓
+SiteController
+  ↓
+verificar.permissao
+  ↓
+sem-permissao.blade.php
+  ↓
+"Você não tem permissão para acessar este site.
+Favor entrar em contato com o administrador."
+```
+
+---
+
+# ▶️ Como executar o projeto
+
+### 1. Clonar o repositório
+
+```
+git clone https://github.com/GiT0rres/Atividade-Middleware.git
+```
+
+### 2. Entrar na pasta
+
+```
+cd Atividade-Middleware
+```
+
+### 3. Instalar as dependências
+
+```
+composer install
+```
+
+### 4. Iniciar o servidor
+
+```
+php artisan serve
+```
+
+### 5. Acessar no navegador
+
+```
+http://127.0.0.1:8000/site
+```
+
+---
+
+# 📦 Entrega
+
+**Repositório GitHub:**
+
+https://github.com/GiT0rres/Atividade-Middleware
+
+---
+
+## 👩‍💻 Desenvolvido por
+
+**Giovanna**
+
+Atividade acadêmica — Desenvolvimento de Sistemas
+**Laravel – Middleware**
